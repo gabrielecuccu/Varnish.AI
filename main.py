@@ -92,6 +92,10 @@ class MyWidget(QtWidgets.QWidget):
         prompt = f"I am a {iam}, polish the following {msgType} keeping the tone {tone}"
         
         self.goButton.setEnabled(False)
+        self.iamCombo.setEnabled(False)
+        self.msgTypeCombo.setEnabled(False)
+        self.toneCombo.setEnabled(False)
+        self.inputTextEdit.setEnabled(False)
         self.progressBar.setRange(0, 0)
         
         self.thread = QtCore.QThread()
@@ -107,6 +111,10 @@ class MyWidget(QtWidgets.QWidget):
     def task_finished(self, result):
         self.outputTextEdit.setPlainText(result)
         self.goButton.setEnabled(True)
+        self.iamCombo.setEnabled(True)
+        self.msgTypeCombo.setEnabled(True)
+        self.toneCombo.setEnabled(True)
+        self.inputTextEdit.setEnabled(True)
         self.progressBar.setRange(0, 100)       
 
 if __name__ == "__main__":
