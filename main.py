@@ -39,9 +39,9 @@ class MyWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         
     def initHeaderLayout(self):
-        iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", ["developer", "person"])
-        msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", ["email", "slack message", "text message"])
-        toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", ["professional", "technical", "polite", "ironic"])
+        iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", sorted(["software engineer", "person", "student", "friend", "patient", "customer", "neighbour"]))
+        msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", sorted(["email", "slack message", "text message"]))
+        toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", sorted(["professional", "technical", "polite", "ironic", "friendly"]))
         
         headerLayout = QtWidgets.QHBoxLayout()
         headerLayout.addLayout(iamLayout)
