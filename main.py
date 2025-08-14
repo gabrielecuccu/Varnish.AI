@@ -122,6 +122,7 @@ if __name__ == "__main__":
 
     widget = MyWidget()
     widget.resize(800, 600)
+    widget.setWindowTitle("Polish my writing")
     widget.show()
 
     sys.exit(app.exec())
