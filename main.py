@@ -2,86 +2,12 @@ import os
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
-
 from openai import OpenAI
+from constants import actors, messageTypes, tones
 
 load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
-
-actors = [
-    "Buyer / Seller",
-    "Citizen",
-    "Client",
-    "Consultant",
-    "Customer",
-    "Designer",
-    "Friend",
-    "Government official",
-    "HR Representative",
-    "Immigration officer",
-    "Influencer",
-    "Lawyer",
-    "Manager",
-    "Marketer",
-    "Medical Professional",
-    "Mentor",
-    "Neighbour",
-    "Parent",
-    "Partner",
-    "Patient",
-    "Person",
-    "Police officer",
-    "Product Owner",
-    "Professor",
-    "Researcher",
-    "Service provider",
-    "Shopper",
-    "Software Engineer",
-    "Stranger",
-    "Student",
-    "Support agent",
-    "Teacher",
-    "Tutor",
-    "Voter",
-    "Vendor"
-]
-
-messageTypes = [
-    "SMS",
-    "Article",
-    "Blog post",
-    "Chat message",
-    "Comment",
-    "Email",
-    "Letter",
-    "Memo",
-    "Slack message",
-    "Social media post"
-]
-
-tones = [
-    "Aggressive",
-    "Authoritative",
-    "Cautious",
-    "Encouraging",
-    "Friendly",
-    "Ironic",
-    "Irritated",
-    "Judgmental",
-    "Objective",
-    "Optimistic",
-    "Playful",
-    "Plain",
-    "Poetic",
-    "Polite",
-    "Professional",
-    "Respectful",
-    "Sarcastic",
-    "Sincere",
-    "Technical",
-    "Witty"
-]
 
 class Worker(QtCore.QObject):
     finished = QtCore.Signal(object)
