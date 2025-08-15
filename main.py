@@ -94,12 +94,7 @@ class MyWidget(QtWidgets.QWidget):
         userMessage = self.inputTextEdit.toPlainText()
         prompt = f"I am a {iam}, I am writing to a {recipient}, polish the following {msgType} keeping the tone {tone}"
         
-        self.goButton.setEnabled(False)
-        self.iamCombo.setEnabled(False)
-        self.recipientsCombo.setEnabled(False)        
-        self.msgTypeCombo.setEnabled(False)
-        self.toneCombo.setEnabled(False)
-        self.inputTextEdit.setEnabled(False)
+        self.enableUI(False)
         self.progressBar.setRange(0, 0)
         
         self.thread = QtCore.QThread()
@@ -114,13 +109,16 @@ class MyWidget(QtWidgets.QWidget):
         
     def task_finished(self, result):
         self.outputTextEdit.setPlainText(result)
-        self.goButton.setEnabled(True)
-        self.iamCombo.setEnabled(True)
-        self.recipientsCombo.setEnabled(True)        
-        self.msgTypeCombo.setEnabled(True)
-        self.toneCombo.setEnabled(True)
-        self.inputTextEdit.setEnabled(True)
-        self.progressBar.setRange(0, 100)       
+        self.enableUI(True)
+        self.progressBar.setRange(0, 100)
+        
+    def enableUI(self, enabled):
+        self.goButton.setEnabled(enabled)
+        self.iamCombo.setEnabled(enabled)
+        self.recipientsCombo.setEnabled(enabled)        
+        self.msgTypeCombo.setEnabled(enabled)
+        self.toneCombo.setEnabled(enabled)
+        self.inputTextEdit.setEnabled(enabled)        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
