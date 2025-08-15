@@ -182,7 +182,6 @@ class MyWidget(QtWidgets.QWidget):
     def enableUI(self, enabled):
         self.polishButton.setEnabled(enabled)
         self.cleanButton.setEnabled(enabled)
-#         self.copyButton.setEnabled(enabled)
         self.iamCombo.setEnabled(enabled)
         self.recipientsCombo.setEnabled(enabled)        
         self.msgTypeCombo.setEnabled(enabled)
