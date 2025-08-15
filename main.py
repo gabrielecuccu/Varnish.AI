@@ -40,11 +40,13 @@ class MyWidget(QtWidgets.QWidget):
         
     def initHeaderLayout(self):
         iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", sorted(["software engineer", "person", "student", "friend", "patient", "customer", "neighbour"]))
+        recipientLayout, self.recipientsCombo = self.initComboBoxLayout("I am writing to a:", sorted(["software engineer", "person", "student", "friend", "patient", "customer", "neighbour"]))
         msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", sorted(["email", "chat", "SMS", "social media post", "comment", "blog post", "article", "letter", "memo"]))
         toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", sorted(["plain", "objective", "professional", "technical", "polite", "friendly", "encouraging", "optimistic", "playful", "ironic", "sarcastic", "witty", "poetic", "authoritative", "cautious", "respectful", "sincere", "irritated", "aggressive", "judgmental"]))
         
         headerLayout = QtWidgets.QHBoxLayout()
         headerLayout.addLayout(iamLayout)
+        headerLayout.addLayout(recipientLayout)        
         headerLayout.addLayout(msgTypeLayout)
         headerLayout.addLayout(toneLayout)
         
@@ -86,13 +88,15 @@ class MyWidget(QtWidgets.QWidget):
     @QtCore.Slot()
     def goClicked(self):
         iam = self.iamCombo.currentText()
+        recipient = self.recipientsCombo.currentText()
         msgType = self.msgTypeCombo.currentText()
         tone = self.toneCombo.currentText()
         userMessage = self.inputTextEdit.toPlainText()
-        prompt = f"I am a {iam}, polish the following {msgType} keeping the tone {tone}"
+        prompt = f"I am a {iam}, I am writing to a {recipient}, polish the following {msgType} keeping the tone {tone}"
         
         self.goButton.setEnabled(False)
         self.iamCombo.setEnabled(False)
+        self.recipientsCombo.setEnabled(False)        
         self.msgTypeCombo.setEnabled(False)
         self.toneCombo.setEnabled(False)
         self.inputTextEdit.setEnabled(False)
@@ -112,6 +116,7 @@ class MyWidget(QtWidgets.QWidget):
         self.outputTextEdit.setPlainText(result)
         self.goButton.setEnabled(True)
         self.iamCombo.setEnabled(True)
+        self.recipientsCombo.setEnabled(True)        
         self.msgTypeCombo.setEnabled(True)
         self.toneCombo.setEnabled(True)
         self.inputTextEdit.setEnabled(True)
