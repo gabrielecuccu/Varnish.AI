@@ -166,7 +166,13 @@ class MyWidget(QtWidgets.QWidget):
     
     @QtCore.Slot()
     def copyClicked(self):
-        pass    
+        cursor = self.outputTextEdit.textCursor()
+        if cursor.hasSelection():
+            selected_text = cursor.selectedText()
+            QtWidgets.QApplication.clipboard().setText(selected_text)
+        else:
+            full_text = self.outputTextEdit.toPlainText()
+            QtWidgets.QApplication.clipboard().setText(full_text)
         
     def task_finished(self, result):
         self.outputTextEdit.setPlainText(result)
