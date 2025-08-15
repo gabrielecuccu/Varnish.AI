@@ -67,23 +67,51 @@ class MyWidget(QtWidgets.QWidget):
         
         return headerLayout
     
-    def initCentralLayout(self): 
+    def initCentralLayout(self):
+        centralLayout = QtWidgets.QHBoxLayout()
+        
         self.inputTextEdit = HintTextEdit("Write something here")
+        centralLayout.addWidget(self.inputTextEdit)
+        
+        buttonsLayout = self.initButtonsLayout()
+        centralLayout.addLayout(buttonsLayout)
+        
         self.outputTextEdit = QtWidgets.QPlainTextEdit()
         self.outputTextEdit.setReadOnly(True)
-        textLayout = QtWidgets.QHBoxLayout()
-        textLayout.addWidget(self.inputTextEdit)
-        textLayout.addWidget(self.outputTextEdit)
+        centralLayout.addWidget(self.outputTextEdit)
         
-        return textLayout
+        self.inputTextEdit.textChanged.connect(self.textHasChanged)
+        self.outputTextEdit.textChanged.connect(self.textHasChanged)
+        
+        return centralLayout
+    
+    def initButtonsLayout(self):
+        buttonsLayout = QtWidgets.QVBoxLayout()
+        
+        self.polishButton = QtWidgets.QPushButton("Polish")
+        self.polishButton.setEnabled(False)
+        self.polishButton.clicked.connect(self.polishClicked)
+        buttonsLayout.addWidget(self.polishButton)
+        
+        self.cleanButton = QtWidgets.QPushButton("Clean")
+        self.cleanButton.setEnabled(False)
+        self.cleanButton.clicked.connect(self.cleanClicked)
+        buttonsLayout.addWidget(self.cleanButton)
+        
+        self.copyButton = QtWidgets.QPushButton("Copy")
+        self.copyButton.setEnabled(False)
+        self.copyButton.clicked.connect(self.copyClicked)
+        buttonsLayout.addWidget(self.copyButton)
+        
+        spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        buttonsLayout.addSpacerItem(spacer)
+        
+        return buttonsLayout
     
     def initFooterLayout(self):
         footerLayout = QtWidgets.QHBoxLayout()
         self.progressBar = QtWidgets.QProgressBar()
-        self.goButton = QtWidgets.QPushButton("Go")
-        self.goButton.clicked.connect(self.goClicked)
         footerLayout.addWidget(self.progressBar, 1)
-        footerLayout.addWidget(self.goButton, 0)
         
         return footerLayout
     
@@ -100,8 +128,17 @@ class MyWidget(QtWidgets.QWidget):
         
         return layout, combo
     
+    def textHasChanged(self):
+        inputText = self.inputTextEdit.toPlainText()
+        outputText = self.outputTextEdit.toPlainText()
+        
+        self.polishButton.setEnabled(inputText != "")
+        self.cleanButton.setEnabled(inputText != "" or outputText != "")
+        self.copyButton.setEnabled(outputText != "")
+    
     @QtCore.Slot()
-    def goClicked(self):
+    def polishClicked(self):
+        self.outputTextEdit.setPlainText("")
         iam = self.iamCombo.currentText()
         recipient = self.recipientsCombo.currentText()
         msgType = self.msgTypeCombo.currentText()
@@ -122,13 +159,24 @@ class MyWidget(QtWidgets.QWidget):
         self.thread.finished.connect(self.thread.deleteLater)
         self.thread.start()
         
+    @QtCore.Slot()
+    def cleanClicked(self):
+        self.inputTextEdit.setPlainText("")
+        self.outputTextEdit.setPlainText("")
+    
+    @QtCore.Slot()
+    def copyClicked(self):
+        pass    
+        
     def task_finished(self, result):
         self.outputTextEdit.setPlainText(result)
         self.enableUI(True)
         self.progressBar.setRange(0, 100)
         
     def enableUI(self, enabled):
-        self.goButton.setEnabled(enabled)
+        self.polishButton.setEnabled(enabled)
+        self.cleanButton.setEnabled(enabled)
+#         self.copyButton.setEnabled(enabled)
         self.iamCombo.setEnabled(enabled)
         self.recipientsCombo.setEnabled(enabled)        
         self.msgTypeCombo.setEnabled(enabled)
