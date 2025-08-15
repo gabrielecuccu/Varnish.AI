@@ -9,6 +9,80 @@ load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
 
+actors = [
+    "Buyer / Seller",
+    "Citizen",
+    "Client",
+    "Consultant",
+    "Customer",
+    "Designer",
+    "Friend",
+    "Government official",
+    "HR Representative",
+    "Immigration officer",
+    "Influencer",
+    "Lawyer",
+    "Manager",
+    "Marketer",
+    "Medical Professional",
+    "Mentor",
+    "Neighbour",
+    "Parent",
+    "Partner",
+    "Patient",
+    "Person",
+    "Police officer",
+    "Product Owner",
+    "Professor",
+    "Researcher",
+    "Service provider",
+    "Shopper",
+    "Software Engineer",
+    "Stranger",
+    "Student",
+    "Support agent",
+    "Teacher",
+    "Tutor",
+    "Voter",
+    "Vendor"
+]
+
+messageTypes = [
+    "SMS",
+    "Article",
+    "Blog post",
+    "Chat message",
+    "Comment",
+    "Email",
+    "Letter",
+    "Memo",
+    "Slack message",
+    "Social media post"
+]
+
+tones = [
+    "Aggressive",
+    "Authoritative",
+    "Cautious",
+    "Encouraging",
+    "Friendly",
+    "Ironic",
+    "Irritated",
+    "Judgmental",
+    "Objective",
+    "Optimistic",
+    "Playful",
+    "Plain",
+    "Poetic",
+    "Polite",
+    "Professional",
+    "Respectful",
+    "Sarcastic",
+    "Sincere",
+    "Technical",
+    "Witty"
+]
+
 class Worker(QtCore.QObject):
     finished = QtCore.Signal(object)
     
@@ -39,10 +113,10 @@ class MyWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         
     def initHeaderLayout(self):
-        iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", sorted(["software engineer", "person", "student", "friend", "patient", "customer", "neighbour"]))
-        recipientLayout, self.recipientsCombo = self.initComboBoxLayout("I am writing to a:", sorted(["software engineer", "person", "student", "friend", "patient", "customer", "neighbour"]))
-        msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", sorted(["email", "chat", "SMS", "social media post", "comment", "blog post", "article", "letter", "memo"]))
-        toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", sorted(["plain", "objective", "professional", "technical", "polite", "friendly", "encouraging", "optimistic", "playful", "ironic", "sarcastic", "witty", "poetic", "authoritative", "cautious", "respectful", "sincere", "irritated", "aggressive", "judgmental"]))
+        iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", actors)
+        recipientLayout, self.recipientsCombo = self.initComboBoxLayout("I am writing to a:", actors)
+        msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", messageTypes)
+        toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", tones)
         
         headerLayout = QtWidgets.QHBoxLayout()
         headerLayout.addLayout(iamLayout)
