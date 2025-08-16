@@ -2,7 +2,7 @@ import os
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, AuthenticationError
 from constants import actors, messageTypes, tones, statusBarMessages
 
 load_dotenv()
@@ -52,6 +52,26 @@ class MyWidget(QtWidgets.QWidget):
         layout.addLayout(self.initFooterLayout(), 0)
         
         self.setLayout(layout)
+            
+    def checkConnection(self):
+        try:
+            client.models.list()  # Lightweight check
+        except AuthenticationError:
+            self.show_error_and_exit()
+    
+    def show_error_and_exit(self):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Critical)
+        msg.setWindowTitle("Authentication error.")
+        msg.setText("Add your OPENAI_API_KEY in the .env file.")
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msg.setDefaultButton(QtWidgets.QMessageBox.Ok)
+
+        # Modal dialog — blocks until user responds
+        msg.exec()
+
+        # Exit app after dialog is closed
+        QtWidgets.QApplication.quit()
         
     def initHeaderLayout(self):
         iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", actors)
@@ -201,5 +221,9 @@ if __name__ == "__main__":
     widget.resize(800, 600)
     widget.setWindowTitle("Polish my writing")
     widget.show()
+    
+    QtCore.QTimer.singleShot(0, widget.checkConnection)
 
     sys.exit(app.exec())
+    
+    
