@@ -3,7 +3,7 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
 from openai import OpenAI
-from constants import actors, messageTypes, tones
+from constants import actors, messageTypes, tones, statusBarMessages
 
 load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")
@@ -109,9 +109,13 @@ class MyWidget(QtWidgets.QWidget):
         return buttonsLayout
     
     def initFooterLayout(self):
-        footerLayout = QtWidgets.QHBoxLayout()
+        footerLayout = QtWidgets.QVBoxLayout()
+        
         self.progressBar = QtWidgets.QProgressBar()
-        footerLayout.addWidget(self.progressBar, 1)
+        footerLayout.addWidget(self.progressBar)
+        
+        self.statusBar = QtWidgets.QLabel(statusBarMessages["initial"])
+        footerLayout.addWidget(self.statusBar)
         
         return footerLayout
     
@@ -139,6 +143,7 @@ class MyWidget(QtWidgets.QWidget):
     @QtCore.Slot()
     def polishClicked(self):
         self.outputTextEdit.setPlainText("")
+        self.statusBar.setText(statusBarMessages["polishing"])
         iam = self.iamCombo.currentText()
         recipient = self.recipientsCombo.currentText()
         msgType = self.msgTypeCombo.currentText()
@@ -178,6 +183,7 @@ class MyWidget(QtWidgets.QWidget):
         self.outputTextEdit.setPlainText(result)
         self.enableUI(True)
         self.progressBar.setRange(0, 100)
+        self.statusBar.setText(statusBarMessages["initial"])
         
     def enableUI(self, enabled):
         self.polishButton.setEnabled(enabled)

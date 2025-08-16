@@ -71,3 +71,9 @@ tones = [
     "Technical",
     "Witty"
 ]
+
+statusBarMessages = {
+    "initial": "Write something in the text area and then click the Polish button",
+    "polishing": "Polishing your writing, hold tight!"
+}
+
