@@ -10,7 +10,8 @@ openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
 
 class Worker(QtCore.QObject):
-    finished = QtCore.Signal(object)
+    partial = QtCore.Signal(object)
+    finished = QtCore.Signal()    
     
     def __init__(self, prompt, userMessage, parent=None):
         super().__init__(parent)
@@ -18,14 +19,17 @@ class Worker(QtCore.QObject):
         self.userMessage = userMessage
 
     def run(self):
-        response = client.responses.create(
+        with client.responses.stream(
             model="gpt-5",
             reasoning={"effort": "low"},
             instructions=self.prompt,
             input=self.userMessage,
-        )
-        
-        self.finished.emit(response.output_text)
+        ) as stream:
+            for event in stream:
+                if event.type == "response.output_text.delta":
+                    self.partial.emit(event.delta)
+                    
+            self.finished.emit()
 
 class HintTextEdit(QtWidgets.QPlainTextEdit):
     def __init__(self, hint_text="", parent=None):
@@ -178,7 +182,7 @@ class MyWidget(QtWidgets.QWidget):
         self.worker = Worker(prompt, userMessage)
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.task_finished)
+        self.worker.partial.connect(self.partialReplyAvailable)
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
@@ -199,8 +203,10 @@ class MyWidget(QtWidgets.QWidget):
             full_text = self.outputTextEdit.toPlainText()
             QtWidgets.QApplication.clipboard().setText(full_text)
         
-    def task_finished(self, result):
-        self.outputTextEdit.setPlainText(result)
+    def partialReplyAvailable(self, partialText):
+        self.outputTextEdit.moveCursor(QtGui.QTextCursor.End)
+        self.outputTextEdit.insertPlainText(partialText)
+        self.outputTextEdit.ensureCursorVisible() 
         self.enableUI(True)
         self.progressBar.setRange(0, 100)
         self.statusBar.setText(statusBarMessages["initial"])
