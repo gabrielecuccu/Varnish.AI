@@ -2,7 +2,7 @@ import os
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
-from openai import OpenAI, AuthenticationError
+from openai import OpenAI, AuthenticationError, APIConnectionError
 from constants import actors, messageTypes, tones, statusBarMessages
 
 load_dotenv()
@@ -10,8 +10,9 @@ openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
 
 class Worker(QtCore.QObject):
+    finished = QtCore.Signal()
     partial = QtCore.Signal(object)
-    finished = QtCore.Signal()    
+    error = QtCore.Signal(object, object, bool)
     
     def __init__(self, prompt, userMessage, parent=None):
         super().__init__(parent)
@@ -19,16 +20,23 @@ class Worker(QtCore.QObject):
         self.userMessage = userMessage
 
     def run(self):
-        with client.responses.stream(
-            model="gpt-5",
-            reasoning={"effort": "low"},
-            instructions=self.prompt,
-            input=self.userMessage,
-        ) as stream:
-            for event in stream:
-                if event.type == "response.output_text.delta":
-                    self.partial.emit(event.delta)
-                    
+        try:
+            with client.responses.stream(
+                model="gpt-5",
+                reasoning={"effort": "low"},
+                instructions=self.prompt,
+                input=self.userMessage,
+            ) as stream:
+                for event in stream:
+                    if event.type == "response.output_text.delta":
+                        self.partial.emit(event.delta)
+                        
+                self.finished.emit()
+        except APIConnectionError:
+            self.error.emit("Error", "Connection error", False)
+            self.finished.emit()
+        except Exception as e:
+            self.error.emit("Error", f"Unexpected error: {e}", False)
             self.finished.emit()
 
 class HintTextEdit(QtWidgets.QPlainTextEdit):
@@ -61,21 +69,26 @@ class MyWidget(QtWidgets.QWidget):
         try:
             client.models.list()  # Lightweight check
         except AuthenticationError:
-            self.show_error_and_exit()
-    
-    def show_error_and_exit(self):
+            self.showError("Error", "Authentication error", True)
+        except APIConnectionError:
+            self.showError("Error", "Connection error", True)
+        
+    def showError(self, title, error, terminate):
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Critical)
-        msg.setWindowTitle("Authentication error.")
-        msg.setText("Add your OPENAI_API_KEY in the .env file.")
+        msg.setWindowTitle(title)
+        msg.setText(error)
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.setDefaultButton(QtWidgets.QMessageBox.Ok)
 
         # Modal dialog — blocks until user responds
         msg.exec()
-
-        # Exit app after dialog is closed
-        QtWidgets.QApplication.quit()
+        
+        if terminate == True:
+            QtWidgets.QApplication.quit()
+        else:
+            self.progressBar.setRange(0, 100)
+            self.enableUI(True)
         
     def initHeaderLayout(self):
         iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", actors)
@@ -186,6 +199,7 @@ class MyWidget(QtWidgets.QWidget):
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.error.connect(self.showError)
         self.thread.start()
         
     @QtCore.Slot()
