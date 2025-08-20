@@ -5,25 +5,11 @@ from dotenv import load_dotenv
 from openai import OpenAI, AuthenticationError, APIConnectionError
 from constants import actors, messageTypes, tones, statusBarMessages
 from worker import Worker
+from widgets import HintTextEdit
 
 load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
-
-class HintTextEdit(QtWidgets.QPlainTextEdit):
-    def __init__(self, hint_text="", parent=None):
-        super().__init__(parent)
-        self.hint_text = hint_text
-
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        if self.toPlainText() == "":
-            painter = QtGui.QPainter(self.viewport())
-            painter.setPen(QtGui.QColor("gray"))
-            painter.setFont(self.font())
-            margin = self.document().documentMargin()
-            painter.drawText(self.viewport().rect().adjusted(int(margin), int(margin), 0, 0),
-                             QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, self.hint_text)
 
 class MyWidget(QtWidgets.QWidget):
     def __init__(self):
