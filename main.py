@@ -4,40 +4,11 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
 from openai import OpenAI, AuthenticationError, APIConnectionError
 from constants import actors, messageTypes, tones, statusBarMessages
+from worker import Worker
 
 load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = openaiApiKey)
-
-class Worker(QtCore.QObject):
-    finished = QtCore.Signal()
-    partial = QtCore.Signal(object)
-    error = QtCore.Signal(object, object, bool)
-    
-    def __init__(self, prompt, userMessage, parent=None):
-        super().__init__(parent)
-        self.prompt = prompt
-        self.userMessage = userMessage
-
-    def run(self):
-        try:
-            with client.responses.stream(
-                model="gpt-5",
-                reasoning={"effort": "low"},
-                instructions=self.prompt,
-                input=self.userMessage,
-            ) as stream:
-                for event in stream:
-                    if event.type == "response.output_text.delta":
-                        self.partial.emit(event.delta)
-                        
-                self.finished.emit()
-        except APIConnectionError:
-            self.error.emit("Error", "Connection error", False)
-            self.finished.emit()
-        except Exception as e:
-            self.error.emit("Error", f"Unexpected error: {e}", False)
-            self.finished.emit()
 
 class HintTextEdit(QtWidgets.QPlainTextEdit):
     def __init__(self, hint_text="", parent=None):
@@ -192,7 +163,7 @@ class MyWidget(QtWidgets.QWidget):
         self.progressBar.setRange(0, 0)
         
         self.thread = QtCore.QThread()
-        self.worker = Worker(prompt, userMessage)
+        self.worker = Worker(client, prompt, userMessage)
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.worker.partial.connect(self.partialReplyAvailable)
