@@ -3,7 +3,7 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
 from openai import OpenAI, AuthenticationError, APIConnectionError
-from constants import actors, messageTypes, tones, statusBarMessages
+from constants import actors, messageTypes, levels, tones, statusBarMessages
 from worker import Worker
 from widgets import HintTextEdit
 
@@ -50,12 +50,14 @@ class MyWidget(QtWidgets.QWidget):
     def initHeaderLayout(self):
         iamLayout, self.iamCombo = self.initComboBoxLayout("I am a:", actors)
         recipientLayout, self.recipientsCombo = self.initComboBoxLayout("I am writing to a:", actors)
+        msgLevelLayout, self.msgLevelCombo = self.initComboBoxLayout("Level:", levels)
         msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout("Polish my:", messageTypes)
         toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", tones)
         
         headerLayout = QtWidgets.QHBoxLayout()
         headerLayout.addLayout(iamLayout)
-        headerLayout.addLayout(recipientLayout)        
+        headerLayout.addLayout(recipientLayout)
+        headerLayout.addLayout(msgLevelLayout)
         headerLayout.addLayout(msgTypeLayout)
         headerLayout.addLayout(toneLayout)
         
@@ -140,10 +142,11 @@ class MyWidget(QtWidgets.QWidget):
         self.statusBar.setText(statusBarMessages["polishing"])
         iam = self.iamCombo.currentText()
         recipient = self.recipientsCombo.currentText()
+        level = self.msgLevelCombo.currentText()
         msgType = self.msgTypeCombo.currentText()
         tone = self.toneCombo.currentText()
         userMessage = self.inputTextEdit.toPlainText()
-        prompt = f"I am a {iam}, I am writing to a {recipient}, polish the following {msgType} keeping the tone {tone}"
+        prompt = f"I am a {iam}, I am writing to a {recipient}, polish {level} the following {msgType} keeping the tone {tone}"
         
         self.enableUI(False)
         self.progressBar.setRange(0, 0)
@@ -186,7 +189,8 @@ class MyWidget(QtWidgets.QWidget):
         self.polishButton.setEnabled(enabled)
         self.cleanButton.setEnabled(enabled)
         self.iamCombo.setEnabled(enabled)
-        self.recipientsCombo.setEnabled(enabled)        
+        self.recipientsCombo.setEnabled(enabled)
+        self.msgLevelCombo.setEnabled(enabled)
         self.msgTypeCombo.setEnabled(enabled)
         self.toneCombo.setEnabled(enabled)
         self.inputTextEdit.setEnabled(enabled)        
