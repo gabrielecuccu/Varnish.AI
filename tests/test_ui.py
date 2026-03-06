@@ -10,12 +10,12 @@ def test_initial_state(qtbot):
 
     qtbot.addWidget(widget)
 
-    # Check that comboboxes are clickable
-    qtbot.mouseClick(widget.iamCombo, Qt.MouseButton.LeftButton)
-    qtbot.mouseClick(widget.recipientsCombo, Qt.MouseButton.LeftButton)
-    qtbot.mouseClick(widget.msgLevelCombo, Qt.MouseButton.LeftButton)
-    qtbot.mouseClick(widget.msgTypeCombo, Qt.MouseButton.LeftButton)
-    qtbot.mouseClick(widget.toneCombo, Qt.MouseButton.LeftButton)
+    # Check that comboboxes are enabled
+    check_combo_box(widget.iamCombo, True)
+    check_combo_box(widget.recipientsCombo, True)
+    check_combo_box(widget.msgLevelCombo, True)
+    check_combo_box(widget.msgTypeCombo, True)
+    check_combo_box(widget.toneCombo, True)
 
     # Check that buttons are presents but not enabled
     check_button(widget.varnishButton, False)
@@ -40,10 +40,125 @@ def test_initial_state(qtbot):
     )
 
 
+def test_writing_text(qtbot):
+    widget = MyWidget()
+
+    qtbot.addWidget(widget)
+    widget.show()
+    qtbot.waitExposed(widget)
+
+    # Write something in the text area
+    widget.inputTextEdit.setFocus()
+    qtbot.keyClicks(widget.inputTextEdit, "Hello Varnish!")
+    assert widget.inputTextEdit.toPlainText() == "Hello Varnish!"
+
+    # Check that comboboxes are still enabled
+    check_combo_box(widget.iamCombo, True)
+    check_combo_box(widget.recipientsCombo, True)
+    check_combo_box(widget.msgLevelCombo, True)
+    check_combo_box(widget.msgTypeCombo, True)
+    check_combo_box(widget.toneCombo, True)
+
+    # Check that buttons are still presents with correct enable state
+    check_button(widget.varnishButton, True)
+    check_button(widget.cleanButton, True)
+    check_button(widget.copyButton, False)
+
+    # Check that the status bar is present, enabled and with the initial text
+    check_label(widget.statusBar, True, app.constants.statusBarMessages["initial"])
+
+    # Check that the progress bar is present, enabled and in the idle state
+    check_progress_bar(widget.progressBar, True, 0, 100)
+
+    check_text_area(
+        text_area=widget.inputTextEdit,
+        enabled=True,
+        readOnly=False,
+        text="Hello Varnish!",
+        hint="Write something here",
+    )
+    check_text_area(
+        text_area=widget.outputTextEdit, enabled=True, readOnly=True, text="", hint=""
+    )
+
+
+def test_varnishing(qtbot):
+    widget = MyWidget()
+
+    qtbot.addWidget(widget)
+    widget.show()
+    qtbot.waitExposed(widget)
+
+    # Write something in the text area
+    widget.inputTextEdit.setFocus()
+    qtbot.keyClicks(widget.inputTextEdit, "Hello Varnish!")
+    assert widget.inputTextEdit.toPlainText() == "Hello Varnish!"
+
+    # Click the Varnish button
+    qtbot.mouseClick(widget.varnishButton, Qt.MouseButton.LeftButton)
+    qtbot.wait(2000)
+
+    # Check that comboboxes are no longer enabled
+    check_combo_box(widget.iamCombo, False)
+    check_combo_box(widget.recipientsCombo, False)
+    check_combo_box(widget.msgLevelCombo, False)
+    check_combo_box(widget.msgTypeCombo, False)
+    check_combo_box(widget.toneCombo, False)
+
+    # Check that buttons are still presents but not enabled
+    check_button(widget.varnishButton, False)
+    check_button(widget.cleanButton, False)
+    check_button(widget.copyButton, False)
+
+    # Check that the status bar is present, enabled and with the initial text
+    check_label(widget.statusBar, True, app.constants.statusBarMessages["varnishing"])
+
+    # Check that the progress bar is present, enabled and in progress state
+    check_progress_bar(widget.progressBar, True, 0, 0)
+
+    check_text_area(
+        text_area=widget.inputTextEdit,
+        enabled=False,
+        readOnly=False,
+        text="Hello Varnish!",
+        hint="Write something here",
+    )
+    check_text_area(
+        text_area=widget.outputTextEdit, enabled=True, readOnly=True, text="", hint=""
+    )
+
+    with qtbot.waitSignal(widget.worker.finished, timeout=50000):
+        pass
+
+    # Check that comboboxes are enabled
+    check_combo_box(widget.iamCombo, True)
+    check_combo_box(widget.recipientsCombo, True)
+    check_combo_box(widget.msgLevelCombo, True)
+    check_combo_box(widget.msgTypeCombo, True)
+    check_combo_box(widget.toneCombo, True)
+
+    # Check that buttons are still presents and enabled
+    check_button(widget.varnishButton, True)
+    check_button(widget.cleanButton, True)
+    check_button(widget.copyButton, True)
+
+    # Check that the status bar is present, enabled and with the initial text
+    check_label(widget.statusBar, True, app.constants.statusBarMessages["initial"])
+
+    # Check that the progress bar is present, enabled and in idle state
+    check_progress_bar(widget.progressBar, True, 0, 100)
+
+
 def check_button(button, enabled):
     assert button is not None
     assert isinstance(button, QtWidgets.QPushButton)
     assert enabled == button.isEnabled()
+
+
+def check_combo_box(combo, enabled):
+    assert combo is not None
+    assert isinstance(combo, QtWidgets.QComboBox)
+    assert enabled == combo.isEnabled()
 
 
 def check_label(label, enabled, text):
