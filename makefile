@@ -3,3 +3,7 @@ run:
 
 test: 
 	pytest
+
+lint:
+	ruff check --fix .
+	black .
