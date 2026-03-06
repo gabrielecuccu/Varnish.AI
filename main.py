@@ -41,7 +41,7 @@ class MyWidget(QtWidgets.QWidget):
         # Modal dialog — blocks until user responds
         msg.exec()
         
-        if terminate == True:
+        if terminate:
             QtWidgets.QApplication.quit()
         else:
             self.progressBar.setRange(0, 100)
