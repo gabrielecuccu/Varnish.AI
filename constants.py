@@ -33,7 +33,7 @@ actors = [
     "Teacher",
     "Tutor",
     "Voter",
-    "Vendor"
+    "Vendor",
 ]
 
 messageTypes = [
@@ -46,7 +46,7 @@ messageTypes = [
     "Letter",
     "Memo",
     "Slack message",
-    "Social media post"
+    "Social media post",
 ]
 
 tones = [
@@ -69,18 +69,12 @@ tones = [
     "Sarcastic",
     "Sincere",
     "Technical",
-    "Witty"
+    "Witty",
 ]
 
-levels = [
-    "Lightly",
-    "Moderately",
-    "Substantially",
-    "Heavily"
-]
+levels = ["Lightly", "Moderately", "Substantially", "Heavily"]
 
 statusBarMessages = {
     "initial": "Write something in the text area and then click the Polish button",
-    "polishing": "Polishing your writing, hold tight!"
+    "polishing": "Polishing your writing, hold tight!",
 }
-
