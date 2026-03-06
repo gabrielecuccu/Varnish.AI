@@ -75,6 +75,6 @@ tones = [
 levels = ["Lightly", "Moderately", "Substantially", "Heavily"]
 
 statusBarMessages = {
-    "initial": "Write something in the text area and then click the Polish button",
-    "polishing": "Polishing your writing, hold tight!",
+    "initial": "Write something in the text area and then click the Varnish button",
+    "varnishing": "Varnishing your writing, hold tight!",
 }

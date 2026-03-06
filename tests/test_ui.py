@@ -18,7 +18,7 @@ def test_initial_state(qtbot):
     qtbot.mouseClick(widget.toneCombo, Qt.MouseButton.LeftButton)
 
     # Check that buttons are presents but not enabled
-    check_button(widget.polishButton, False)
+    check_button(widget.varnishButton, False)
     check_button(widget.cleanButton, False)
     check_button(widget.copyButton, False)
 

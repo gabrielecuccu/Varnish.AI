@@ -55,7 +55,7 @@ class MyWidget(QtWidgets.QWidget):
         )
         msgLevelLayout, self.msgLevelCombo = self.initComboBoxLayout("Level:", levels)
         msgTypeLayout, self.msgTypeCombo = self.initComboBoxLayout(
-            "Polish my:", messageTypes
+            "Varnish my:", messageTypes
         )
         toneLayout, self.toneCombo = self.initComboBoxLayout("Keeping the tone:", tones)
 
@@ -89,10 +89,10 @@ class MyWidget(QtWidgets.QWidget):
     def initButtonsLayout(self):
         buttonsLayout = QtWidgets.QVBoxLayout()
 
-        self.polishButton = QtWidgets.QPushButton("Polish")
-        self.polishButton.setEnabled(False)
-        self.polishButton.clicked.connect(self.polishClicked)
-        buttonsLayout.addWidget(self.polishButton)
+        self.varnishButton = QtWidgets.QPushButton("Varnish")
+        self.varnishButton.setEnabled(False)
+        self.varnishButton.clicked.connect(self.varnishClicked)
+        buttonsLayout.addWidget(self.varnishButton)
 
         self.cleanButton = QtWidgets.QPushButton("Clean")
         self.cleanButton.setEnabled(False)
@@ -139,21 +139,21 @@ class MyWidget(QtWidgets.QWidget):
         inputText = self.inputTextEdit.toPlainText()
         outputText = self.outputTextEdit.toPlainText()
 
-        self.polishButton.setEnabled(inputText != "")
+        self.varnishButton.setEnabled(inputText != "")
         self.cleanButton.setEnabled(inputText != "" or outputText != "")
         self.copyButton.setEnabled(outputText != "")
 
     @QtCore.Slot()
-    def polishClicked(self):
+    def varnishClicked(self):
         self.outputTextEdit.setPlainText("")
-        self.statusBar.setText(statusBarMessages["polishing"])
+        self.statusBar.setText(statusBarMessages["varnishing"])
         iam = self.iamCombo.currentText()
         recipient = self.recipientsCombo.currentText()
         level = self.msgLevelCombo.currentText()
         msgType = self.msgTypeCombo.currentText()
         tone = self.toneCombo.currentText()
         userMessage = self.inputTextEdit.toPlainText()
-        prompt = f"I am a {iam}, I am writing to a {recipient}, polish {level} the following {msgType} keeping the tone {tone}"
+        prompt = f"I am a {iam}, I am writing to a {recipient}, varnish {level} the following {msgType} keeping the tone {tone}"
 
         self.enableUI(False)
         self.progressBar.setRange(0, 0)
@@ -193,7 +193,7 @@ class MyWidget(QtWidgets.QWidget):
         self.statusBar.setText(statusBarMessages["initial"])
 
     def enableUI(self, enabled):
-        self.polishButton.setEnabled(enabled)
+        self.varnishButton.setEnabled(enabled)
         self.cleanButton.setEnabled(enabled)
         self.iamCombo.setEnabled(enabled)
         self.recipientsCombo.setEnabled(enabled)
@@ -208,7 +208,7 @@ if __name__ == "__main__":
 
     widget = MyWidget()
     widget.resize(800, 600)
-    widget.setWindowTitle("Polish my writing")
+    widget.setWindowTitle("Varnish.AI - varnish my writing")
     widget.show()
 
     QtCore.QTimer.singleShot(0, widget.checkConnection)
