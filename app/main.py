@@ -3,9 +3,9 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from dotenv import load_dotenv
 from openai import OpenAI, AuthenticationError, APIConnectionError
-from .constants import actors, messageTypes, levels, tones, statusBarMessages
-from .worker import Worker
-from .widgets import HintTextEdit
+from app.constants import actors, messageTypes, levels, tones, statusBarMessages
+from app.worker import Worker
+from app.widgets import HintTextEdit
 
 load_dotenv()
 openaiApiKey = os.getenv("OPENAI_API_KEY")

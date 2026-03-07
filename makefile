@@ -1,5 +1,5 @@
 run: 
-	../.venv/bin/python -m app.main
+	python3 -m app.main
 
 test: 
 	pytest --cov=app --cov-report=html tests/
