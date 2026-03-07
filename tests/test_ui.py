@@ -96,7 +96,6 @@ def test_varnishing(qtbot):
 
     # Click the Varnish button
     qtbot.mouseClick(widget.varnishButton, Qt.MouseButton.LeftButton)
-    qtbot.wait(2000)
 
     # Check that comboboxes are no longer enabled
     check_combo_box(widget.iamCombo, False)
@@ -147,6 +146,31 @@ def test_varnishing(qtbot):
 
     # Check that the progress bar is present, enabled and in idle state
     check_progress_bar(widget.progressBar, True, 0, 100)
+
+    _test_copy_button(qtbot, widget)
+    _test_clean_button(qtbot, widget)
+
+
+def _test_copy_button(qtbot, widget):
+    outputTextEditText = widget.outputTextEdit.toPlainText()
+    assert len(outputTextEditText) > 0
+
+    clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.clear()
+    assert len(clipboard.text()) == 0
+
+    # Click the Copy button
+    qtbot.mouseClick(widget.copyButton, Qt.MouseButton.LeftButton)
+
+    # Check that the text has been copied
+    assert outputTextEditText == clipboard.text()
+
+
+def _test_clean_button(qtbot, widget):
+    # Click the Clean button
+    qtbot.mouseClick(widget.cleanButton, Qt.MouseButton.LeftButton)
+
+    assert len(widget.outputTextEdit.toPlainText()) == 0
 
 
 def check_button(button, enabled):
