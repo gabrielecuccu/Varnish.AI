@@ -1,3 +1,6 @@
+install:
+	pip install -r requirements.txt
+
 run: 
 	python3 -m app.main
 
