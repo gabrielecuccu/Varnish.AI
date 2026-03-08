@@ -1,8 +1,8 @@
 import os
 import sys
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, AuthenticationError, APIConnectionError
 from app.main_widget import MainWidget
 
 load_dotenv()
