@@ -1,12 +1,19 @@
-from app.main import MyWidget
+import os
+from app.main import MainWidget
 from app.widgets import HintTextEdit
 import app.constants
 from PySide6.QtCore import Qt
 from PySide6 import QtWidgets
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+openaiApiKey = os.getenv("OPENAI_API_KEY")
+ai_client = OpenAI(api_key=openaiApiKey)
 
 
 def test_initial_state(qtbot):
-    widget = MyWidget()
+    widget = MainWidget(ai_client)
 
     qtbot.addWidget(widget)
 
@@ -41,7 +48,7 @@ def test_initial_state(qtbot):
 
 
 def test_writing_text(qtbot):
-    widget = MyWidget()
+    widget = MainWidget(ai_client)
 
     qtbot.addWidget(widget)
     widget.show()
@@ -83,7 +90,7 @@ def test_writing_text(qtbot):
 
 
 def test_varnishing(qtbot):
-    widget = MyWidget()
+    widget = MainWidget(ai_client)
 
     qtbot.addWidget(widget)
     widget.show()
